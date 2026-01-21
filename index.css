@@ -1,0 +1,29 @@
+/* 1. Element Selector */
+body {
+    background-color: #f0f4f8;
+    margin: 0;
+}
+
+/* 2. Class Selector - Flexbox Grid */
+.container {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+/* 3. ID Selector */
+#main-footer {
+    text-align: center;
+    background: #2c3e50;
+    color: white;
+}
+
+/* CSS Animation (Requirement) */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in-text {
+    animation: fadeIn 3s;
+}
