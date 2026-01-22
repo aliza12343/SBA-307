@@ -1,29 +1,57 @@
-/* 1. Element Selector */
-body {
-    background-color: #f0f4f8;
-    margin: 0;
-}
-
-/* 2. Class Selector - Flexbox Grid */
-.container {
-    display: flex;
-    justify-content: space-around;
-    padding: 20px;
-}
-
-/* 3. ID Selector */
-#main-footer {
-    text-align: center;
-    background: #2c3e50;
+/* Hero Section Container */
+.hero {
+    position: relative;
+    height: 80vh; /* Covers 80% of the viewport height */
+    background-image: url('images/banner-bg.jpg'); /* Replace with your image path */
+    background-size: cover;
+    background-position: center;
     color: white;
 }
 
-/* CSS Animation (Requirement) */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+/* The Dark Overlay (Requirement: Visual Design) */
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Black with 50% transparency */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
-.fade-in-text {
-    animation: fadeIn 3s;
+/* Hero Text Styling */
+.hero-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
 }
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+/* Call to Action Button */
+.cta-button {
+    background-color: #ff5a5f; /* A complementary accent color */
+    color: white;
+    padding: 12px 30px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+.cta-button:hover {
+    background-color: #e0484d;
+}
+
+/* Secondary Banner Section */
+.banner {
+    padding: 50px 20px;
+    text-align: center;
+    background-color: #ffffff;
+}
+
