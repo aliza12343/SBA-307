@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lookbook | Studio SA</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root { --gold:#C9A84C;--gold-light:#E8D5A3;--gold-dim:rgba(201,168,76,0.12);--black:#080808;--charcoal:#111111;--off-white:#F0EBE1;--muted:rgba(240,235,225,0.45); }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--black);color:var(--off-white);font-family:'Jost',sans-serif;font-weight:300;overflow-x:hidden;cursor:none}
+    body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9000;opacity:0.35}
+    .cursor{width:10px;height:10px;background:var(--gold);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;mix-blend-mode:difference}
+    .cursor-ring{width:36px;height:36px;border:1px solid var(--gold);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;opacity:0.6;transition:all 0.35s ease}
+    .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 60px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(8,8,8,0.95) 0%,transparent 100%);transition:padding 0.4s,background 0.4s}
+    .navbar.scrolled{padding:16px 60px;background:rgba(8,8,8,0.97);border-bottom:1px solid rgba(201,168,76,0.15)}
+    .navbar-brand{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;letter-spacing:6px;color:var(--off-white)!important;text-decoration:none;text-transform:uppercase}
+    .navbar-brand span{color:var(--gold)}
+    .nav-links{display:flex;gap:40px;list-style:none}
+    .nav-links a{font-size:0.7rem;font-weight:400;letter-spacing:3px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.3s;position:relative}
+    .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--gold);transition:width 0.3s}
+    .nav-links a:hover,.nav-links a.active{color:var(--gold)}
+    .nav-links a:hover::after,.nav-links a.active::after{width:100%}
+    .page-hero{height:60vh;position:relative;display:flex;align-items:flex-end;overflow:hidden}
+    .page-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(35%)}
+    .page-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,var(--black) 0%,transparent 60%)}
+    .page-hero-content{position:relative;z-index:1;padding:0 60px 60px}
+    .page-eyebrow{font-size:0.65rem;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+    .page-title{font-family:'Cormorant Garamond',serif;font-size:clamp(48px,7vw,96px);font-weight:300;line-height:1}
+    .page-title em{font-style:italic;color:var(--gold)}
+    .filter-bar{padding:32px 60px;border-bottom:1px solid rgba(201,168,76,0.1);display:flex;gap:8px;align-items:center}
+    .filter-label{font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-right:16px}
+    .filter-btn{padding:8px 20px;background:transparent;border:1px solid rgba(240,235,225,0.1);color:var(--muted);font-family:'Jost',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;cursor:none;transition:all 0.3s}
+    .filter-btn:hover,.filter-btn.active{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
+    .lookbook-grid{padding:60px;columns:3;column-gap:2px}
+    .lookbook-item{break-inside:avoid;position:relative;overflow:hidden;margin-bottom:2px;cursor:none}
+    .lookbook-item img{width:100%;display:block;filter:brightness(85%);transition:transform 0.7s ease,filter 0.4s ease}
+    .lookbook-item:hover img{transform:scale(1.04);filter:brightness(60%)}
+    .lookbook-item-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:28px;background:linear-gradient(to top,rgba(8,8,8,0.8) 0%,transparent 50%);opacity:0;transition:opacity 0.4s}
+    .lookbook-item:hover .lookbook-item-overlay{opacity:1}
+    .lookbook-item-season{font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+    .lookbook-item-name{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300}
+    .lookbook-item-tag{position:absolute;top:20px;right:20px;padding:5px 12px;background:var(--gold);color:var(--black);font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;font-weight:500}
+    .table-section{padding:80px 60px;background:var(--charcoal)}
+    .section-label{font-size:0.6rem;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+    .section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,52px);font-weight:300;margin-bottom:48px}
+    .section-title em{font-style:italic;color:var(--gold)}
+    .gold-divider{width:60px;height:1px;background:linear-gradient(to right,var(--gold),transparent);margin:16px 0 40px}
+    .collection-table{width:100%;border-collapse:collapse}
+    .collection-table thead tr{border-bottom:1px solid rgba(201,168,76,0.3)}
+    .collection-table th{font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);padding:0 0 16px;font-weight:400}
+    .collection-table tbody tr{border-bottom:1px solid rgba(240,235,225,0.05);transition:background 0.3s}
+    .collection-table tbody tr:hover{background:var(--gold-dim)}
+    .collection-table td{padding:20px 0;font-size:0.9rem;color:var(--muted)}
+    .collection-table td:first-child{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--off-white);font-weight:400}
+    .status-badge{display:inline-block;padding:4px 12px;font-size:0.6rem;letter-spacing:2px;text-transform:uppercase}
+    .status-in{border:1px solid #4CAF50;color:#4CAF50}
+    .status-pre{border:1px solid var(--gold);color:var(--gold)}
+    .status-ltd{border:1px solid #9C88FF;color:#9C88FF}
+    .status-out{border:1px solid rgba(240,235,225,0.2);color:rgba(240,235,225,0.3)}
+    .quote-section{padding:100px 60px;text-align:center;position:relative;overflow:hidden}
+    .quote-section::before{content:'❝';position:absolute;font-family:'Cormorant Garamond',serif;font-size:300px;color:rgba(201,168,76,0.04);top:-60px;left:50%;transform:translateX(-50%);pointer-events:none}
+    .quote-text{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,4vw,48px);font-style:italic;font-weight:300;line-height:1.4;max-width:800px;margin:0 auto 24px;color:var(--off-white)}
+    .quote-attr{font-size:0.7rem;letter-spacing:4px;text-transform:uppercase;color:var(--gold)}
+    footer{background:var(--black);border-top:1px solid rgba(201,168,76,0.15);padding:80px 60px 40px}
+    .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:60px;max-width:1300px;margin:0 auto 60px}
+    .footer-brand{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;letter-spacing:4px;color:var(--off-white);margin-bottom:16px}
+    .footer-brand span{color:var(--gold)}
+    .footer-tagline{font-size:0.8rem;color:var(--muted);line-height:1.8;max-width:260px}
+    .footer-heading{font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+    .footer-links{list-style:none}
+    .footer-links li{margin-bottom:12px}
+    .footer-links a{font-size:0.85rem;color:var(--muted);text-decoration:none;transition:color 0.3s}
+    .footer-links a:hover{color:var(--off-white)}
+    .footer-bottom{max-width:1300px;margin:0 auto;padding-top:40px;border-top:1px solid rgba(240,235,225,0.06);display:flex;justify-content:space-between;font-size:0.7rem;color:rgba(240,235,225,0.2)}
+    .reveal{opacity:0;transform:translateY(40px);transition:opacity 0.9s ease,transform 0.9s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    .fade-up{animation:fadeUp 1s forwards}
+    .delay-1{animation-delay:0.3s;opacity:0}
+  </style>
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="navbar-brand">STUDIO<span>SA</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="lookbook.html" class="active">Lookbook</a></li>
+      <li><a href="lehenga.html">Lehengas</a></li>
+      <li><a href="saree.html">Sarees</a></li>
+      <li><a href="jewelry.html">Jewelry</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href=".idea/login.html">Sign In</a></li>
+    </ul>
+  </nav>
+  <div class="page-hero">
+    <img src="https://i.pinimg.com/1200x/a3/78/9c/a3789ce62265a60f14539d23e2e6a680.jpg" alt="Lookbook">
+    <div class="page-hero-content">
+      <p class="page-eyebrow fade-up">✦ Autumn / Winter 2026 ✦</p>
+      <h1 class="page-title fade-up delay-1">The <em>Silk Road</em><br>Gallery</h1>
+    </div>
+  </div>
+  <div class="filter-bar">
+    <span class="filter-label">Filter by</span>
+    <button class="filter-btn active" onclick="filterItems('all',this)">All</button>
+    <button class="filter-btn" onclick="filterItems('bridal',this)">Bridal</button>
+    <button class="filter-btn" onclick="filterItems('festive',this)">Festive</button>
+    <button class="filter-btn" onclick="filterItems('pret',this)">Prêt</button>
+  </div>
+  <div class="lookbook-grid" id="lookbookGrid">
+    <div class="lookbook-item reveal" data-cat="bridal"><img src="https://i.pinimg.com/736x/08/63/78/086378703fc64c6d1166cc6c87f740ce.jpg" alt="Look 1"><div class="lookbook-item-tag">Bridal</div><div class="lookbook-item-overlay"><div class="lookbook-item-season">AW 2026</div><div class="lookbook-item-name">The Heritage Set</div></div></div>
+    <div class="lookbook-item reveal" data-cat="festive" style="margin-top:60px"><img src="https://i.pinimg.com/736x/0b/f2/5c/0bf25cedaac66bdc0e0973fd1b9df0b4.jpg" alt="Look 2"><div class="lookbook-item-tag">Festive</div><div class="lookbook-item-overlay"><div class="lookbook-item-season">AW 2026</div><div class="lookbook-item-name">Golden Hour</div></div></div>
+    <div class="lookbook-item reveal" data-cat="pret"><img src="https://i.pinimg.com/736x/ce/74/5a/ce745a401c4e7e9c32b5a9edfe7fc586.jpg" alt="Look 3"><div class="lookbook-item-tag">Prêt</div><div class="lookbook-item-overlay"><div class="lookbook-item-season">AW 2026</div><div class="lookbook-item-name">Midnight Jharokha</div></div></div>
+    <div class="lookbook-item reveal" data-cat="festive"><img src="https://i.pinimg.com/736x/0e/2a/ba/0e2aba663467a003db8220e1f0312c67.jpg" alt="Look 4"><div class="lookbook-item-tag">Festive</div><div class="lookbook-item-overlay"><div class="lookbook-item-season">AW 2026</div><div class="lookbook-item-name">Saffron Nights</div></div></div>
+    <div class="lookbook-item reveal" data-cat="bridal" style="margin-top:-40px"><img src="https://i.pinimg.com/736x/18/fa/e3/18fae3bb6d13886ad850e8e40e864332.jpg" alt="Look 5"><div class="lookbook-item-tag">Bridal</div><div class="lookbook-item-overlay"><div class="lookbook-item-season">AW 2026</div><div class="lookbook-item-name">Royal Umber</div></div></div>
+    <div class="lookbook-item reveal" data-cat="pret" style="margin-top:30px"><img src="https://i.pinimg.com/736x/08/63/78/086378703fc64c6d1166cc6c87f740ce.jpg" alt="Look 6"><div class="lookbook-item-tag">Prêt</div><div class="lookbook-item-overlay"><div class="lookbook-item-season">AW 2026</div><div class="lookbook-item-name">Ivory Petals</div></div></div>
+  </div>
+  <div class="quote-section">
+    <p class="quote-text reveal">"Fashion is the armor to survive the reality of everyday life — but South Asian fashion is a poem worn on the body."</p>
+    <p class="quote-attr reveal">Studio SA, 2026</p>
+  </div>
+  <div class="table-section">
+    <div style="max-width:1300px;margin:0 auto">
+      <p class="section-label reveal">Availability</p>
+      <h2 class="section-title reveal">Collection <em>Index</em></h2>
+      <div class="gold-divider reveal"></div>
+      <table class="collection-table reveal">
+        <thead><tr><th>Piece</th><th>Fabric</th><th>Category</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>The Heritage Set</td><td>Raw Silk</td><td>Bridal</td><td><span class="status-badge status-in">In Stock</span></td></tr>
+          <tr><td>Golden Hour</td><td>Chiffon</td><td>Festive</td><td><span class="status-badge status-pre">Pre-Order</span></td></tr>
+          <tr><td>Midnight Jharokha</td><td>Velvet</td><td>Prêt</td><td><span class="status-badge status-ltd">Limited Edition</span></td></tr>
+          <tr><td>Saffron Nights</td><td>Organza</td><td>Festive</td><td><span class="status-badge status-in">In Stock</span></td></tr>
+          <tr><td>Royal Umber</td><td>Banarasi Silk</td><td>Bridal</td><td><span class="status-badge status-out">Sold Out</span></td></tr>
+          <tr><td>Ivory Petals</td><td>Handmade Lace</td><td>Prêt</td><td><span class="status-badge status-in">In Stock</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-grid">
+      <div><div class="footer-brand">STUDIO<span>SA</span></div><div style="width:60px;height:1px;background:linear-gradient(to right,var(--gold),transparent);margin:16px 0"></div><p class="footer-tagline">South Asian couture rooted in heritage. Based in Columbus, Ohio.</p></div>
+      <div><div class="footer-heading">Navigate</div><ul class="footer-links"><li><a href="index.html">Home</a></li><li><a href="lookbook.html">Lookbook</a></li><li><a href="lehenga.html">Lehengas</a></li>
+      <li><a href="saree.html">Sarees</a></li><li><a href="jewelry.html">Jewelry</a></li><li><a href="shop.html">Shop</a></li><li><a href="contact.html">Contact</a></li><li><a href=".idea/login.html">Sign In</a></li></ul></div>
+      <div><div class="footer-heading">Collections</div><ul class="footer-links"><li><a href="lehenga.html">Bridal Couture</a></li><li><a href="shop.html">Casual Prêt</a></li><li><a href="jewelry.html">Traditional Jewelry</a></li><li><a href="lookbook.html">Archive</a></li></ul></div>
+      <div><div class="footer-heading">Connect</div><ul class="footer-links"><li><a href="contact.html">Instagram</a></li><li><a href="lookbook.html">Pinterest</a></li><li><a href="contact.html">(614) 555-0192</a></li><li><a href="contact.html">Book Consultation</a></li><li><a href=".idea/register.html">Create Account</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Studio SA · Columbus, Ohio. All rights reserved.</span><span>Handcrafted with care ✦</span></div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+    document.addEventListener('mousemove',e=>{cursor.style.left=e.clientX-5+'px';cursor.style.top=e.clientY-5+'px';ring.style.left=e.clientX-18+'px';ring.style.top=e.clientY-18+'px';});
+    window.addEventListener('scroll',()=>document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>60));
+    const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.1});
+    document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+    function filterItems(cat,btn){document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.lookbook-item').forEach(item=>{item.style.opacity=(cat==='all'||item.dataset.cat===cat)?'1':'0.15';});}
+  </script>
+</body>
+</html>

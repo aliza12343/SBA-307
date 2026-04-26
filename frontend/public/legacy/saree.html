@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bridal Sarees | Studio SA</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #C9A84C; --gold-light: #E8D5A3; --gold-dim: rgba(201,168,76,0.12);
+      --black: #080808; --charcoal: #111111; --off-white: #F0EBE1; --muted: rgba(240,235,225,0.45);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--off-white); font-family: 'Jost', sans-serif; font-weight: 300; overflow-x: hidden; cursor: none; }
+    body::before { content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9000;opacity:0.35; }
+
+    /* CURSOR */
+    .cursor { width:10px;height:10px;background:var(--gold);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;mix-blend-mode:difference; }
+    .cursor-ring { width:36px;height:36px;border:1px solid var(--gold);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;opacity:0.6;transition:all 0.35s ease; }
+
+    /* NAV */
+    .navbar { position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 60px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(8,8,8,0.95) 0%,transparent 100%);transition:padding 0.4s,background 0.4s; }
+    .navbar.scrolled { padding:16px 60px;background:rgba(8,8,8,0.97);border-bottom:1px solid rgba(201,168,76,0.15); }
+    .navbar-brand { font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;letter-spacing:6px;color:var(--off-white)!important;text-decoration:none;text-transform:uppercase; }
+    .navbar-brand span { color:var(--gold); }
+    .nav-links { display:flex;gap:40px;list-style:none; }
+    .nav-links a { font-size:0.7rem;font-weight:400;letter-spacing:3px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.3s;position:relative; }
+    .nav-links a::after { content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--gold);transition:width 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color:var(--gold); }
+    .nav-links a:hover::after, .nav-links a.active::after { width:100%; }
+
+    /* ── FULL-SCREEN HERO ── */
+    .full-hero { height:100vh;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden; }
+    .full-hero img { position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(0.38);transform:scale(1.06);transition:transform 9s ease; }
+    .full-hero:hover img { transform:scale(1); }
+    .full-hero::after { content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 35%,var(--black) 100%); }
+    .hero-center { position:relative;z-index:1;text-align:center;padding:0 24px; }
+    .hero-eyebrow { font-size:0.6rem;letter-spacing:7px;text-transform:uppercase;color:var(--gold);margin-bottom:24px;opacity:0;animation:fadeUp 1s 0.3s forwards; }
+    .hero-title { font-family:'Cormorant Garamond',serif;font-size:clamp(72px,11vw,148px);font-weight:300;line-height:0.88;opacity:0;animation:fadeUp 1s 0.6s forwards; }
+    .hero-title em { font-style:italic;color:var(--gold);display:block; }
+    .hero-sub { font-size:0.72rem;letter-spacing:4px;color:var(--muted);margin-top:28px;opacity:0;animation:fadeUp 1s 0.9s forwards; }
+    .scroll-hint { position:absolute;bottom:44px;left:50%;transform:translateX(-50%);z-index:1;display:flex;flex-direction:column;align-items:center;gap:10px; }
+    .scroll-hint span { font-size:0.52rem;letter-spacing:5px;text-transform:uppercase;color:var(--muted); }
+    .scroll-line { width:1px;height:52px;background:linear-gradient(to bottom,var(--gold),transparent);animation:pulse 2s ease infinite; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes pulse { 0%,100%{opacity:0.25} 50%{opacity:1} }
+
+    /* ── MARQUEE STRIP ── */
+    .marquee-strip { background:var(--gold);padding:11px 0;overflow:hidden;white-space:nowrap; }
+    .marquee-inner { display:inline-flex;animation:marquee 20s linear infinite; }
+    .marquee-inner span { font-size:0.6rem;letter-spacing:5px;text-transform:uppercase;color:var(--black);padding:0 28px;font-weight:500; }
+    @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    /* ── EDITORIAL ROWS ── */
+    .editorial-row { display:grid;grid-template-columns:58% 42%;min-height:92vh;border-bottom:1px solid rgba(201,168,76,0.07); }
+    .editorial-row.reverse { grid-template-columns:42% 58%; }
+    .editorial-row.reverse .editorial-image { order:2; }
+    .editorial-row.reverse .editorial-content { order:1; }
+    .editorial-row.reverse .editorial-content::before { left:auto;right:0; }
+
+    .editorial-image { position:relative;overflow:hidden; }
+    .editorial-image img { width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(0.82);transition:transform 0.95s cubic-bezier(0.25,0.46,0.45,0.94),filter 0.5s; }
+    .editorial-row:hover .editorial-image img { transform:scale(1.04);filter:brightness(0.65); }
+
+    .editorial-content { display:flex;flex-direction:column;justify-content:center;padding:80px 72px;background:var(--charcoal);position:relative; }
+    .editorial-content::before { content:'';position:absolute;top:70px;bottom:70px;left:0;width:1px;background:linear-gradient(to bottom,transparent,rgba(201,168,76,0.28),transparent); }
+
+    .ed-num { font-family:'Cormorant Garamond',serif;font-size:6rem;font-weight:300;color:rgba(201,168,76,0.07);line-height:1;margin-bottom:-12px;display:block; }
+    .ed-tag { font-size:0.56rem;letter-spacing:6px;text-transform:uppercase;color:var(--gold);margin-bottom:16px; }
+    .ed-title { font-family:'Cormorant Garamond',serif;font-size:clamp(34px,3.4vw,54px);font-weight:300;line-height:1.08;margin-bottom:18px; }
+    .ed-title em { font-style:italic;color:var(--gold); }
+    .ed-desc { font-size:0.8rem;line-height:1.95;color:var(--muted);max-width:330px;margin-bottom:20px; }
+    .ed-price { font-size:0.68rem;letter-spacing:3px;color:var(--gold);margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid rgba(201,168,76,0.12); }
+    .ed-actions { display:flex;gap:12px; }
+    .btn-solid { padding:14px 34px;background:var(--gold);color:var(--black);font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;border:none;cursor:none;font-family:'Jost',sans-serif;transition:background 0.3s; }
+    .btn-solid:hover { background:var(--gold-light); }
+    .btn-wish-ed { width:48px;height:48px;border:1px solid rgba(201,168,76,0.35);background:transparent;color:var(--gold);font-size:1.1rem;cursor:none;transition:all 0.3s;display:flex;align-items:center;justify-content:center; }
+    .btn-wish-ed:hover { background:var(--gold-dim);border-color:var(--gold); }
+
+    /* ── COLLECTION HEADER ── */
+    .col-header { padding:90px 60px 50px;text-align:center; }
+    .col-eyebrow { font-size:0.58rem;letter-spacing:6px;text-transform:uppercase;color:var(--gold);margin-bottom:16px; }
+    .col-title { font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4.5vw,60px);font-weight:300;line-height:1.05; }
+    .col-title em { font-style:italic;color:var(--gold); }
+    .gold-rule { width:50px;height:1px;background:var(--gold);margin:28px auto 0; }
+
+    /* ── 4-COLUMN STRIP ── */
+    .strip-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:2px; }
+    .strip-card { position:relative;overflow:hidden;cursor:none;height:580px; }
+    .strip-card img { width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(0.78);transition:transform 0.85s cubic-bezier(0.25,0.46,0.45,0.94),filter 0.5s; }
+    .strip-card:hover img { transform:scale(1.08);filter:brightness(0.5); }
+    .strip-info { position:absolute;bottom:0;left:0;right:0;padding:24px 24px 20px;background:linear-gradient(to top,rgba(8,8,8,0.95) 0%,transparent 100%); }
+    .strip-tag { font-size:0.52rem;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:5px; }
+    .strip-name { font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;margin-bottom:3px; }
+    .strip-price { font-size:0.66rem;letter-spacing:2px;color:var(--muted); }
+    .strip-overlay { position:absolute;inset:0;display:flex;align-items:flex-end;padding:24px;opacity:0;transition:opacity 0.35s; }
+    .strip-card:hover .strip-overlay { opacity:1; }
+    .strip-actions { display:flex;gap:8px;width:100%;margin-top:72px; }
+    .strip-btn-add { flex:1;padding:11px;font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;background:var(--gold);color:var(--black);border:none;cursor:none;font-family:'Jost',sans-serif;transition:background 0.3s; }
+    .strip-btn-add:hover { background:var(--gold-light); }
+    .strip-btn-wish { width:42px;height:42px;border:1px solid rgba(201,168,76,0.5);background:transparent;color:var(--gold);cursor:none;display:flex;align-items:center;justify-content:center;font-size:0.95rem;transition:all 0.3s; }
+    .strip-btn-wish:hover { background:var(--gold-dim); }
+
+    /* ── BESPOKE FULL-WIDTH BANNER ── */
+    .bespoke-banner { position:relative;height:70vh;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-top:2px; }
+    .bespoke-banner img { position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%;filter:brightness(0.28);transition:transform 8s ease; }
+    .bespoke-banner:hover img { transform:scale(1.03); }
+    .bespoke-banner::after { content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(201,168,76,0.06) 0%,transparent 70%); }
+    .bespoke-content { position:relative;z-index:1;text-align:center;padding:0 40px; }
+    .bespoke-tag { font-size:0.58rem;letter-spacing:6px;text-transform:uppercase;color:var(--gold);margin-bottom:24px; }
+    .bespoke-title { font-family:'Cormorant Garamond',serif;font-size:clamp(40px,6vw,80px);font-weight:300;line-height:1;margin-bottom:20px; }
+    .bespoke-title em { font-style:italic;color:var(--gold);display:block; }
+    .bespoke-desc { font-size:0.78rem;letter-spacing:1px;color:var(--muted);max-width:420px;margin:0 auto 36px;line-height:1.9; }
+    .btn-outline-gold { display:inline-block;padding:14px 40px;border:1px solid var(--gold);color:var(--gold);font-size:0.62rem;letter-spacing:4px;text-transform:uppercase;text-decoration:none;transition:all 0.3s;cursor:none; }
+    .btn-outline-gold:hover { background:var(--gold);color:var(--black); }
+
+    /* ── PROCESS SECTION ── */
+    .process-section { padding:90px 60px;border-top:1px solid rgba(201,168,76,0.1); }
+    .section-eyebrow { font-size:0.58rem;letter-spacing:6px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;text-align:center; }
+    .section-title { font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,52px);font-weight:300;text-align:center;margin-bottom:64px;line-height:1.08; }
+    .section-title em { font-style:italic;color:var(--gold); }
+    .process-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:2px; }
+    .process-item { text-align:center;padding:48px 36px;border:1px solid rgba(201,168,76,0.08);transition:border-color 0.4s,background 0.4s; }
+    .process-item:hover { border-color:rgba(201,168,76,0.25);background:rgba(201,168,76,0.03); }
+    .process-num { font-family:'Cormorant Garamond',serif;font-size:3.5rem;font-weight:300;color:rgba(201,168,76,0.15);margin-bottom:16px;display:block; }
+    .process-name { font-size:0.68rem;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:14px; }
+    .process-desc { font-size:0.78rem;line-height:1.9;color:var(--muted); }
+
+    /* ── TOAST ── */
+    .toast-msg { position:fixed;bottom:40px;right:40px;background:var(--charcoal);border:1px solid var(--gold);padding:16px 28px;font-size:0.68rem;letter-spacing:2px;color:var(--gold);z-index:9999;transform:translateY(80px);opacity:0;transition:all 0.4s; }
+    .toast-msg.show { transform:translateY(0);opacity:1;pointer-events:all; }
+
+    /* ── FOOTER ── */
+    .page-footer { padding:40px 60px;border-top:1px solid rgba(201,168,76,0.1);display:flex;justify-content:space-between;align-items:center; }
+    .footer-brand { font-family:'Cormorant Garamond',serif;font-size:1.1rem;letter-spacing:4px;text-transform:uppercase; }
+    .footer-brand span { color:var(--gold); }
+    .footer-copy { font-size:0.6rem;letter-spacing:2px;color:var(--muted); }
+
+    /* REVEAL */
+    .reveal { opacity:0;transform:translateY(28px);transition:opacity 0.85s ease,transform 0.85s ease; }
+    .reveal.visible { opacity:1;transform:translateY(0); }
+
+    /* ── MOBILE ── */
+    @media(max-width:900px) {
+      .navbar { padding:20px 24px; }
+      .navbar.scrolled { padding:14px 24px; }
+      .nav-links { gap:18px; }
+      .nav-links a { font-size:0.6rem; }
+      .hero-title { font-size:clamp(52px,14vw,90px); }
+      .editorial-row, .editorial-row.reverse { grid-template-columns:1fr;min-height:auto; }
+      .editorial-row.reverse .editorial-image { order:0; }
+      .editorial-row.reverse .editorial-content { order:1; }
+      .editorial-image { height:60vw;min-height:320px; }
+      .editorial-content { padding:48px 28px; }
+      .editorial-content::before { display:none; }
+      .strip-grid { grid-template-columns:1fr 1fr;gap:2px; }
+      .strip-card { height:380px; }
+      .bespoke-banner { height:55vw;min-height:320px; }
+      .process-grid { grid-template-columns:1fr; }
+      .process-section { padding:60px 24px; }
+      .page-footer { padding:24px;flex-direction:column;gap:12px;text-align:center; }
+      .col-header { padding:60px 24px 36px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav class="navbar" id="navbar">
+  <a class="navbar-brand" href="index.html">Studio <span>SA</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="lookbook.html">Lookbook</a></li>
+    <li><a href="lehenga.html">Lehengas</a></li>
+    <li><a href="saree.html" class="active">Sarees</a></li>
+    <li><a href="jewelry.html">Jewelry</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="checkout.html">Checkout</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href=".idea/login.html">Sign In</a></li>
+  </ul>
+</nav>
+
+<!-- FULL-SCREEN HERO -->
+<section class="full-hero">
+  <img src="images/saree1.jpg" alt="Bridal Saree">
+  <div class="hero-center">
+    <p class="hero-eyebrow">Studio SA — Bridal Collection</p>
+    <h1 class="hero-title">The Art of<br><em>the Saree</em></h1>
+    <p class="hero-sub">Handcrafted for the woman who carries heritage with grace</p>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- GOLD MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-inner">
+    <span>Bridal</span><span>·</span>
+    <span>Silk</span><span>·</span>
+    <span>Heritage</span><span>·</span>
+    <span>Couture</span><span>·</span>
+    <span>Handcrafted</span><span>·</span>
+    <span>Zardozi</span><span>·</span>
+    <span>Gota Patti</span><span>·</span>
+    <span>Atelier</span><span>·</span>
+    <span>Bridal</span><span>·</span>
+    <span>Silk</span><span>·</span>
+    <span>Heritage</span><span>·</span>
+    <span>Couture</span><span>·</span>
+    <span>Handcrafted</span><span>·</span>
+    <span>Zardozi</span><span>·</span>
+    <span>Gota Patti</span><span>·</span>
+    <span>Atelier</span><span>·</span>
+  </div>
+</div>
+
+<!-- EDITORIAL ROW 1 — image left, text right -->
+<div class="editorial-row reveal">
+  <div class="editorial-image">
+    <img src="images/saree2.jpg" alt="Scarlet Durbar">
+  </div>
+  <div class="editorial-content">
+    <span class="ed-num">01</span>
+    <p class="ed-tag">Heritage Bridal</p>
+    <h2 class="ed-title">Scarlet<br><em>Durbar</em></h2>
+    <p class="ed-desc">A celebration of the Mughal court rendered in pure silk. Deep crimson with hand-placed zardozi work that catches candlelight like no other. For the bride who commands every room she enters.</p>
+    <p class="ed-price">From $3,400 &nbsp;·&nbsp; Made to Order</p>
+    <div class="ed-actions">
+      <button class="btn-solid" onclick="addToCart('Scarlet Durbar')">Add to Cart</button>
+      <button class="btn-wish-ed" title="Wishlist">♡</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDITORIAL ROW 2 — text left, image right -->
+<div class="editorial-row reverse reveal">
+  <div class="editorial-image">
+    <img src="images/saree3.jpg" alt="Champagne Mist">
+  </div>
+  <div class="editorial-content">
+    <span class="ed-num">02</span>
+    <p class="ed-tag">Couture Bridal</p>
+    <h2 class="ed-title">Champagne<br><em>Mist</em></h2>
+    <p class="ed-desc">Weightless layers of champagne chiffon embroidered with ivory threadwork and crystal droplets. A saree that moves like morning light — ethereal, luminous, unforgettable.</p>
+    <p class="ed-price">From $4,100 &nbsp;·&nbsp; Made to Order</p>
+    <div class="ed-actions">
+      <button class="btn-solid" onclick="addToCart('Champagne Mist')">Add to Cart</button>
+      <button class="btn-wish-ed" title="Wishlist">♡</button>
+    </div>
+  </div>
+</div>
+
+<!-- COLLECTION HEADER -->
+<div class="col-header reveal">
+  <p class="col-eyebrow">The Full Collection</p>
+  <h2 class="col-title">More to <em>discover</em></h2>
+  <div class="gold-rule"></div>
+</div>
+
+<!-- 4-COLUMN STRIP -->
+<div class="strip-grid">
+
+  <div class="strip-card">
+    <img src="images/saree4.jpg" alt="Botanical Bloom">
+    <div class="strip-info">
+      <p class="strip-tag">Garden Collection</p>
+      <p class="strip-name">Botanical Bloom</p>
+      <p class="strip-price">From $2,200</p>
+    </div>
+    <div class="strip-overlay">
+      <div class="strip-actions">
+        <button class="strip-btn-add" onclick="addToCart('Botanical Bloom')">Add to Cart</button>
+        <button class="strip-btn-wish" title="Wishlist">♡</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="strip-card">
+    <img src="images/saree5.jpg" alt="Rose Dusk">
+    <div class="strip-info">
+      <p class="strip-tag">Floral Bridal</p>
+      <p class="strip-name">Rose Dusk</p>
+      <p class="strip-price">From $2,950</p>
+    </div>
+    <div class="strip-overlay">
+      <div class="strip-actions">
+        <button class="strip-btn-add" onclick="addToCart('Rose Dusk')">Add to Cart</button>
+        <button class="strip-btn-wish" title="Wishlist">♡</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="strip-card">
+    <img src="images/saree6.jpg" alt="Petal and Pearl">
+    <div class="strip-info">
+      <p class="strip-tag">Ethereal Collection</p>
+      <p class="strip-name">Petal &amp; Pearl</p>
+      <p class="strip-price">From $3,600</p>
+    </div>
+    <div class="strip-overlay">
+      <div class="strip-actions">
+        <button class="strip-btn-add" onclick="addToCart('Petal & Pearl')">Add to Cart</button>
+        <button class="strip-btn-wish" title="Wishlist">♡</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="strip-card">
+    <img src="images/saree7.jpg" alt="The Vermillion Rani">
+    <div class="strip-info">
+      <p class="strip-tag">Signature Bridal</p>
+      <p class="strip-name">The Vermillion Rani</p>
+      <p class="strip-price">From $2,800</p>
+    </div>
+    <div class="strip-overlay">
+      <div class="strip-actions">
+        <button class="strip-btn-add" onclick="addToCart('The Vermillion Rani')">Add to Cart</button>
+        <button class="strip-btn-wish" title="Wishlist">♡</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- BESPOKE FULL-WIDTH BANNER -->
+<div class="bespoke-banner reveal">
+  <img src="images/saree1.jpg" alt="Bespoke Saree">
+  <div class="bespoke-content">
+    <p class="bespoke-tag">Bespoke Service</p>
+    <h2 class="bespoke-title">Your saree,<br><em>your story</em></h2>
+    <p class="bespoke-desc">Every bride is singular. Our atelier works with you from fabric selection to final drape — crafting a saree that is yours alone.</p>
+    <a href="contact.html" class="btn-outline-gold">Book a Consultation</a>
+  </div>
+</div>
+
+<!-- PROCESS SECTION -->
+<section class="process-section">
+  <p class="section-eyebrow">The Studio SA Way</p>
+  <h2 class="section-title">Crafted with<br><em>intention</em></h2>
+  <div class="process-grid">
+    <div class="process-item reveal">
+      <span class="process-num">01</span>
+      <p class="process-name">Consultation</p>
+      <p class="process-desc">We begin with a private appointment to understand your vision, occasion, and the story you wish to tell.</p>
+    </div>
+    <div class="process-item reveal">
+      <span class="process-num">02</span>
+      <p class="process-name">Atelier Craft</p>
+      <p class="process-desc">Each piece is hand-embroidered by master artisans, using techniques passed through generations.</p>
+    </div>
+    <div class="process-item reveal">
+      <span class="process-num">03</span>
+      <p class="process-name">Final Draping</p>
+      <p class="process-desc">Our specialists ensure your saree is draped to perfection — a ritual as beautiful as the garment itself.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="page-footer">
+  <p class="footer-brand">Studio <span>SA</span></p>
+  <p class="footer-copy">© 2025 Studio SA. All rights reserved.</p>
+  <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap;">
+    <a href="checkout.html" style="font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);text-decoration:none;">View Checkout →</a>
+    <a href="shop.html" style="font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);text-decoration:none;">← Back to Shop</a>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast-msg" id="toast"></div>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring   = document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{ mx=e.clientX;my=e.clientY;cursor.style.transform=`translate(${mx-5}px,${my-5}px)`; });
+  (function animRing(){ rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.transform=`translate(${rx-18}px,${ry-18}px)`;requestAnimationFrame(animRing); })();
+
+  // Navbar scroll
+  window.addEventListener('scroll',()=>document.getElementById('navbar').classList.toggle('scrolled',scrollY>80));
+
+  // Scroll reveal
+  const ro = new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('visible');ro.unobserve(e.target); }
+  }),{threshold:0.08});
+  document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+  // Add to cart — saves to localStorage
+  const PRICES = {
+    'Scarlet Durbar':3400,'Champagne Mist':4100,'Botanical Bloom':2200,
+    'Rose Dusk':2950,'Petal & Pearl':3600,'The Vermillion Rani':2800
+  };
+  function addToCart(name){
+    const price=PRICES[name]||0;
+    const cart=JSON.parse(localStorage.getItem('sa_cart')||'[]');
+    const existing=cart.find(i=>i.name===name);
+    if(existing) existing.qty++;
+    else cart.push({name,price,qty:1});
+    localStorage.setItem('sa_cart',JSON.stringify(cart));
+    const t=document.getElementById('toast');
+    t.innerHTML=`✦  ${name} added &nbsp;<a href="checkout.html" style="color:var(--gold-light);text-decoration:underline;cursor:pointer;">View Cart →</a>`;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),3500);
+  }
+
+  // Wishlist toggle — covers all wish buttons
+  document.querySelectorAll('.btn-wish-ed, .strip-btn-wish').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      btn.textContent = btn.textContent==='♡' ? '♥' : '♡';
+      btn.style.color = btn.textContent==='♥' ? '#c0392b' : 'var(--gold)';
+    });
+  });
+</script>
+</body>
+</html>

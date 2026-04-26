@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Studio SA — SBA-307 Capstone Presentation</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1a1a;
+    --gold: #c8972a;
+    --gold-light: #f0d080;
+    --cream: #faf8f4;
+    --stone: #e8e3da;
+    --muted: #6b6560;
+    --accent: #8b4f2e;
+    --slide-w: 100vw;
+    --slide-h: 100vh;
+  }
+
+  html, body { height: 100%; overflow: hidden; background: #111; font-family: 'Georgia', serif; }
+
+  /* ── Slide engine ── */
+  .deck { width: 100%; height: 100%; position: relative; }
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 5vh 6vw;
+    opacity: 0; pointer-events: none; transition: opacity .45s ease;
+    text-align: center;
+  }
+  .slide.active { opacity: 1; pointer-events: all; }
+
+  /* ── Themes ── */
+  .theme-dark  { background: #111; color: var(--cream); }
+  .theme-cream { background: var(--cream); color: var(--ink); }
+  .theme-gold  { background: linear-gradient(135deg,#1a1208 0%,#2d1e06 100%); color: var(--gold-light); }
+  .theme-stone { background: var(--stone); color: var(--ink); }
+
+  /* ── Typography ── */
+  .eyebrow {
+    font-family: 'Courier New', monospace; font-size: clamp(.65rem,1.2vw,.85rem);
+    letter-spacing: .18em; text-transform: uppercase; opacity: .6; margin-bottom: .6rem;
+  }
+  h1 { font-size: clamp(2rem,5vw,3.8rem); font-weight: 400; line-height: 1.15; margin-bottom: 1.2rem; }
+  h2 { font-size: clamp(1.4rem,3.2vw,2.4rem); font-weight: 400; line-height: 1.2; margin-bottom: 1rem; }
+  h3 { font-size: clamp(1rem,2vw,1.5rem); font-weight: 600; margin-bottom: .5rem; }
+  .lead { font-size: clamp(.85rem,1.6vw,1.15rem); opacity: .8; max-width: 680px; line-height: 1.7; }
+  .gold-word { color: var(--gold); }
+  .theme-gold .gold-word { color: var(--gold-light); }
+
+  /* ── Layout helpers ── */
+  .cols { display: flex; gap: 3vw; align-items: flex-start; width: 100%; max-width: 1000px; }
+  .col  { flex: 1; text-align: left; }
+  .card {
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 12px; padding: 1.4rem 1.6rem; margin-bottom: 1rem; text-align: left;
+  }
+  .theme-cream .card, .theme-stone .card {
+    background: #fff; border-color: rgba(0,0,0,.1); box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  }
+  .card h3 { color: var(--gold); font-size: 1rem; }
+  .theme-cream .card h3, .theme-stone .card h3 { color: var(--accent); }
+  .card p, .card li { font-size: .87rem; opacity: .85; line-height: 1.6; font-family: sans-serif; }
+  .card ul { padding-left: 1.1rem; }
+  .tag {
+    display: inline-block; padding: .25rem .7rem; border-radius: 20px; font-size: .72rem;
+    font-family: 'Courier New', monospace; letter-spacing: .08em; margin: .2rem .15rem;
+  }
+  .tag-dark { background: rgba(200,151,42,.18); color: var(--gold-light); border: 1px solid rgba(200,151,42,.3); }
+  .tag-light { background: rgba(139,79,46,.1); color: var(--accent); border: 1px solid rgba(139,79,46,.2); }
+  .badge {
+    display: inline-flex; align-items: center; gap: .4rem; padding: .4rem 1rem;
+    border-radius: 6px; font-size: .8rem; font-family: sans-serif; margin: .3rem;
+  }
+  .badge-green  { background: #1a3a1a; color: #7dd87d; border: 1px solid #2d5a2d; }
+  .badge-red    { background: #3a1a1a; color: #d87d7d; border: 1px solid #5a2d2d; }
+  .badge-amber  { background: #3a2d0a; color: #e0c060; border: 1px solid #5a4a1a; }
+  .badge-blue   { background: #0a1a3a; color: #7da8d8; border: 1px solid #1a3a5a; }
+  .number-big { font-size: clamp(3rem,8vw,6rem); font-weight: 300; color: var(--gold); line-height: 1; }
+  .divider { width: 48px; height: 2px; background: var(--gold); margin: 1.2rem auto; }
+  .theme-cream .divider, .theme-stone .divider { background: var(--accent); }
+
+  /* ── Code block ── */
+  pre {
+    background: #0d1117; border: 1px solid #30363d; border-radius: 8px;
+    padding: 1rem 1.2rem; font-size: .78rem; line-height: 1.6; text-align: left;
+    overflow-x: auto; max-width: 100%; color: #e6edf3;
+  }
+  .kw  { color: #ff7b72; }
+  .cls { color: #ffa657; }
+  .str { color: #a5d6ff; }
+  .cmt { color: #8b949e; font-style: italic; }
+  .ann { color: #d2a8ff; }
+
+  /* ── Architecture diagram ── */
+  .arch {
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    justify-content: center; margin: 1.5rem 0;
+  }
+  .arch-box {
+    border-radius: 10px; padding: .8rem 1.2rem; min-width: 130px;
+    text-align: center; font-size: .82rem; font-family: sans-serif;
+  }
+  .arch-fe   { background: #0f3460; border: 2px solid #1a6bad; color: #90c6f0; }
+  .arch-api  { background: #2d1a08; border: 2px solid #8b4a1a; color: #e0a060; }
+  .arch-db   { background: #0a2a1a; border: 2px solid #1a6b3a; color: #60d090; }
+  .arch-sec  { background: #1a0a2d; border: 2px solid #5a1a8b; color: #c090e0; }
+  .arch-arrow { font-size: 1.4rem; color: rgba(255,255,255,.4); }
+  .arch-box strong { display: block; font-size: 1rem; margin-bottom: .2rem; }
+
+  /* ── Flow steps ── */
+  .flow { display: flex; gap: 0; align-items: center; justify-content: center; flex-wrap: wrap; margin: 1rem 0; }
+  .flow-step {
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15);
+    border-radius: 8px; padding: .6rem 1rem; font-size: .8rem; font-family: sans-serif;
+    text-align: center; min-width: 100px;
+  }
+  .flow-step span { display: block; font-size: .65rem; opacity: .6; margin-top: .2rem; font-family: monospace; }
+  .flow-arr { padding: 0 .5rem; opacity: .5; font-size: 1.2rem; }
+
+  /* ── Progress bar ── */
+  #progress {
+    position: fixed; bottom: 0; left: 0; height: 3px;
+    background: var(--gold); transition: width .3s ease; z-index: 100;
+  }
+
+  /* ── Controls ── */
+  #controls {
+    position: fixed; bottom: 1.2rem; right: 1.5rem;
+    display: flex; gap: .6rem; z-index: 100; align-items: center;
+  }
+  #slide-count { font-family: monospace; font-size: .75rem; color: rgba(255,255,255,.5); }
+  .ctrl-btn {
+    background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+    color: #fff; border-radius: 6px; padding: .4rem .9rem; cursor: pointer;
+    font-size: .8rem; transition: background .2s;
+  }
+  .ctrl-btn:hover { background: rgba(255,255,255,.2); }
+
+  /* ── Section label ── */
+  .section-label {
+    position: absolute; top: 1.5rem; left: 2rem;
+    font-family: monospace; font-size: .65rem; letter-spacing: .12em;
+    text-transform: uppercase; opacity: .35;
+  }
+
+  /* ── Slide-specific ── */
+  .title-slide .divider { width: 64px; height: 3px; }
+  .check { color: #7dd87d; margin-right: .4rem; }
+  .cross { color: #d87d7d; margin-right: .4rem; }
+
+  .timeline { width: 100%; max-width: 800px; }
+  .tl-row {
+    display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.2rem;
+  }
+  .tl-dot {
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem; font-weight: bold; margin-top: .1rem;
+  }
+  .tl-dot.gold { background: var(--gold); color: #111; }
+  .tl-dot.muted { background: rgba(255,255,255,.15); color: rgba(255,255,255,.6); }
+  .tl-body { text-align: left; }
+  .tl-body h3 { font-size: .95rem; margin-bottom: .2rem; }
+  .tl-body p  { font-size: .8rem; opacity: .7; font-family: sans-serif; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ═══════════════════════════════ SLIDE 1 — TITLE ════════════════════════════════ -->
+  <div class="slide theme-dark title-slide active">
+    <p class="eyebrow">SBA-307 &nbsp;·&nbsp; Full-Stack Capstone &nbsp;·&nbsp; 2025</p>
+    <h1><span class="gold-word">Studio SA</span></h1>
+    <div class="divider"></div>
+    <p class="lead">A full-stack South Asian fashion e-commerce platform built with React 18 + Spring Boot 3</p>
+    <br/>
+    <div style="margin-top:1rem;">
+      <span class="tag tag-dark">React 18</span>
+      <span class="tag tag-dark">Spring Boot 3</span>
+      <span class="tag tag-dark">MySQL</span>
+      <span class="tag tag-dark">JWT Auth</span>
+      <span class="tag tag-dark">AWS-Ready</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 2 — PROBLEM ═════════════════════════════ -->
+  <div class="slide theme-cream">
+    <div class="section-label" style="color:#333;">Problem &amp; Solution</div>
+    <p class="eyebrow">The Problem</p>
+    <h2>South Asian fashion boutiques are stuck <span class="gold-word">offline</span></h2>
+    <div class="divider"></div>
+    <div class="cols" style="max-width:900px;">
+      <div class="card col">
+        <h3>No Digital Storefront</h3>
+        <p>Customers browse via WhatsApp photos and phone calls. No product catalog, no search, no filtering by style or occasion.</p>
+      </div>
+      <div class="card col">
+        <h3>Manual Booking</h3>
+        <p>Bridal consultations are booked through DMs. No structured inquiry form, no tracking, no confirmation emails.</p>
+      </div>
+      <div class="card col">
+        <h3>No Order Tracking</h3>
+        <p>Customers have no visibility into their orders. No accounts, no history, no status updates — everything is informal.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 3 — SOLUTION ════════════════════════════ -->
+  <div class="slide theme-gold">
+    <div class="section-label">Problem &amp; Solution</div>
+    <p class="eyebrow">The Solution</p>
+    <h2>A production-grade e-commerce platform for a <span class="gold-word">Columbus boutique</span></h2>
+    <div class="divider"></div>
+    <div class="cols" style="max-width:900px; margin-top:.5rem;">
+      <div class="card col">
+        <h3>Shop & Lookbook</h3>
+        <ul>
+          <li>Filterable product catalog (sarees, lehengas, jewelry)</li>
+          <li>Lookbook editorial with category filters</li>
+          <li>Cart with quantity management</li>
+        </ul>
+      </div>
+      <div class="card col">
+        <h3>Secure Accounts</h3>
+        <ul>
+          <li>JWT authentication — register, login, logout</li>
+          <li>Role-based access (USER / ADMIN)</li>
+          <li>Guest checkout supported</li>
+        </ul>
+      </div>
+      <div class="card col">
+        <h3>Studio Operations</h3>
+        <ul>
+          <li>Consultation request form (Contact API)</li>
+          <li>Order creation with shipping details</li>
+          <li>Admin-only order + user management</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 4 — ARCHITECTURE ════════════════════════ -->
+  <div class="slide theme-dark">
+    <div class="section-label">Architecture</div>
+    <p class="eyebrow">System Design</p>
+    <h2>Three-tier architecture, <span class="gold-word">stateless by design</span></h2>
+    <div class="divider"></div>
+    <div class="arch">
+      <div class="arch-box arch-fe">
+        <strong>React 18 SPA</strong>
+        Vite 5 · Router 6<br/>Context API · Fetch
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box arch-sec">
+        <strong>Spring Security</strong>
+        JWT Filter · CORS<br/>Rate Limiter
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box arch-api">
+        <strong>Spring Boot 3</strong>
+        REST Controllers<br/>Service · JPA
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box arch-db">
+        <strong>MySQL 8</strong>
+        JPA / Hibernate<br/>RDS in prod
+      </div>
+    </div>
+    <p class="lead" style="font-size:.85rem; margin-top:.5rem;">
+      No sessions. Every request carries a signed JWT. The frontend API client injects the token automatically and enforces a 10-second timeout on every fetch.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 5 — TECH STACK ══════════════════════════ -->
+  <div class="slide theme-cream">
+    <div class="section-label" style="color:#333;">Architecture</div>
+    <p class="eyebrow">Technology Stack</p>
+    <h2>Chosen for <span class="gold-word">reliability</span> and industry relevance</h2>
+    <div class="divider"></div>
+    <div class="cols" style="max-width:960px;">
+      <div class="card col">
+        <h3>Frontend</h3>
+        <ul>
+          <li>React 18 — component-based UI</li>
+          <li>Vite 5 — sub-second HMR</li>
+          <li>React Router DOM 6 — SPA navigation</li>
+          <li>Context API + <code>useReducer</code> — global state</li>
+          <li>PropTypes — runtime type checking</li>
+          <li>Custom fetch client — timeouts + auth headers</li>
+        </ul>
+      </div>
+      <div class="card col">
+        <h3>Backend</h3>
+        <ul>
+          <li>Spring Boot 3.2.4 — REST API framework</li>
+          <li>Spring Security 6 — filter chain + RBAC</li>
+          <li>JJWT 0.12.3 — token generation &amp; validation</li>
+          <li>Jakarta Validation — <code>@Valid</code> + <code>@NotBlank</code></li>
+          <li>Bucket4j 8.x — IP-based rate limiting</li>
+          <li>Springdoc OpenAPI — Swagger UI docs</li>
+        </ul>
+      </div>
+      <div class="card col">
+        <h3>Testing &amp; Infra</h3>
+        <ul>
+          <li>JUnit 5 + Mockito — unit tests</li>
+          <li>Postman — 25+ integration tests</li>
+          <li>MySQL 8 / AWS RDS</li>
+          <li>AWS SSM Parameter Store — secrets</li>
+          <li>BCrypt — password hashing</li>
+          <li>Maven — build &amp; dependency management</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 6 — KEY DECISIONS ══════════════════════ -->
+  <div class="slide theme-stone">
+    <div class="section-label" style="color:#333;">Architecture</div>
+    <p class="eyebrow">Key Design Decisions</p>
+    <h2>Every choice has a <span class="gold-word">reason</span></h2>
+    <div class="divider"></div>
+    <div class="cols" style="max-width:900px;">
+      <div class="col">
+        <div class="card">
+          <h3>JWT over Sessions</h3>
+          <p>Stateless tokens scale horizontally — no session store needed. The frontend decodes the JWT to check expiry locally before making API calls.</p>
+        </div>
+        <div class="card">
+          <h3>useReducer over useState</h3>
+          <p>Auth and cart state have multiple interdependent transitions. useReducer makes state machines explicit and prevents inconsistent intermediate states.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Centralized API Client</h3>
+          <p>All fetch calls go through a single apiClient.js that injects Bearer tokens and enforces a 10-second AbortController timeout — no duplication.</p>
+        </div>
+        <div class="card">
+          <h3>Externalized Secrets</h3>
+          <p><code>${ENV_VAR:default}</code> in application.properties means local dev works without environment setup, while prod reads from AWS SSM — same codebase.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 7 — DEMO ════════════════════════════════ -->
+  <div class="slide theme-dark">
+    <div class="section-label">Live Demo</div>
+    <p class="eyebrow">Demo Flow</p>
+    <h2>Walk-through: <span class="gold-word">customer journey</span></h2>
+    <div class="divider"></div>
+    <div class="flow" style="flex-direction:column; align-items:flex-start; max-width:700px; gap:.6rem;">
+      <div style="display:flex; align-items:center; gap:1rem; width:100%;">
+        <div class="tl-dot gold">1</div>
+        <div class="tl-body">
+          <h3>Browse the Shop</h3>
+          <p>Filter by category (Sarees, Lehengas, Jewelry) — live product grid from the backend API</p>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:1rem; width:100%;">
+        <div class="tl-dot gold">2</div>
+        <div class="tl-body">
+          <h3>Add to Cart &amp; Adjust Quantities</h3>
+          <p>CartContext with useReducer — ADD / UPDATE_QTY / REMOVE / CLEAR actions</p>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:1rem; width:100%;">
+        <div class="tl-dot gold">3</div>
+        <div class="tl-body">
+          <h3>Register &amp; Login</h3>
+          <p>JWT issued on login, saved to localStorage, decoded to check expiry on every page load</p>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:1rem; width:100%;">
+        <div class="tl-dot gold">4</div>
+        <div class="tl-body">
+          <h3>Checkout</h3>
+          <p>POST /api/orders — returns order number SA-000001. Authenticated user attached automatically.</p>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:1rem; width:100%;">
+        <div class="tl-dot gold">5</div>
+        <div class="tl-body">
+          <h3>Contact / Consultation Request</h3>
+          <p>POST /api/contact — server-side validation, success/error notice, loading spinner</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 8 — SECURITY DEEP DIVE ══════════════════ -->
+  <div class="slide theme-dark">
+    <div class="section-label">Technical Deep Dive</div>
+    <p class="eyebrow">Security</p>
+    <h2>Three vulnerabilities <span class="gold-word">found and fixed</span></h2>
+    <div class="divider"></div>
+    <div class="cols" style="max-width:960px;">
+      <div class="col">
+        <div class="card">
+          <h3>Privilege Escalation</h3>
+          <p><span class="cross">✗</span> <strong>Before:</strong> POST /api/users/register accepted <code>"role":"ADMIN"</code> in the request body — anyone could make themselves admin.</p>
+          <p style="margin-top:.5rem;"><span class="check">✓</span> <strong>Fixed:</strong> Removed the endpoint. The secure /api/auth/register always assigns USER role. Admin-only user management is behind ADMIN role guard.</p>
+        </div>
+        <div class="card">
+          <h3>Silent Token Pass-Through</h3>
+          <p><span class="cross">✗</span> <strong>Before:</strong> JwtAuthFilter called chain.doFilter() even when a token was present but invalid — attacker could use expired tokens.</p>
+          <p style="margin-top:.5rem;"><span class="check">✓</span> <strong>Fixed:</strong> Returns HTTP 401 with JSON body immediately when token fails validation.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Hardcoded JWT Secret</h3>
+          <p><span class="cross">✗</span> <strong>Before:</strong> Secret was a <code>static final</code> string in JwtUtil — impossible to rotate without redeploying.</p>
+          <p style="margin-top:.5rem;"><span class="check">✓</span> <strong>Fixed:</strong> Constructor injection via <code>@Value("${jwt.secret}")</code> reads from env var in prod, sensible default locally.</p>
+        </div>
+        <div class="card">
+          <h3>Rate Limiting</h3>
+          <p><span class="check">✓</span> <strong>Added:</strong> Bucket4j RateLimitFilter throttles <code>/api/auth/login</code> and <code>/api/auth/register</code> to 10 requests/minute per IP. Returns HTTP 429 on breach.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 9 — REACT PATTERNS ═════════════════════ -->
+  <div class="slide theme-gold">
+    <div class="section-label">Technical Deep Dive</div>
+    <p class="eyebrow">React Patterns</p>
+    <h2>Correct hooks, <span class="gold-word">every time</span></h2>
+    <div class="divider"></div>
+    <div class="cols" style="max-width:960px;">
+      <div class="col">
+        <div class="card">
+          <h3>Rules of Hooks Bug Found</h3>
+          <p>Early returns were placed BEFORE useState calls — this crashes React at runtime. All hooks must be declared unconditionally before any conditional returns.</p>
+        </div>
+        <div class="card">
+          <h3>JWT Expiry on Load</h3>
+          <p>AuthContext decodes the JWT payload with <code>atob()</code> and compares <code>exp * 1000</code> to <code>Date.now()</code> before restoring auth state from localStorage.</p>
+        </div>
+      </div>
+      <div class="col">
+<pre><code><span class="cmt">// WRONG — hook after conditional return</span>
+<span class="kw">const</span> { user } = useAuth()
+<span class="kw">if</span> (user) <span class="kw">return</span> &lt;Navigate /&gt;
+<span class="kw">const</span> [form, setForm] = <span class="cls">useState</span>({}) <span class="cmt">// ← crash</span>
+
+<span class="cmt">// CORRECT — all hooks first</span>
+<span class="kw">const</span> { user } = useAuth()
+<span class="kw">const</span> [form, setForm] = <span class="cls">useState</span>({})  <span class="cmt">// ← safe</span>
+<span class="kw">const</span> [errors, setErrors] = <span class="cls">useState</span>({})
+<span class="kw">if</span> (user) <span class="kw">return</span> &lt;Navigate /&gt;  <span class="cmt">// ← after hooks</span></code></pre>
+        <div class="card" style="margin-top:.8rem;">
+          <h3>AbortController Timeout</h3>
+          <p>Every API call has a 10-second timeout via AbortController. Aborted fetches throw <code>'Request timed out.'</code> to show the user a clear message.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 10 — AWS ════════════════════════════════ -->
+  <div class="slide theme-dark">
+    <div class="section-label">AWS Infrastructure</div>
+    <p class="eyebrow">Cloud Deployment</p>
+    <h2>Built <span class="gold-word">cloud-ready</span> from day one</h2>
+    <div class="divider"></div>
+    <div class="cols" style="max-width:920px;">
+      <div class="col">
+        <div class="card">
+          <h3>Compute — EC2</h3>
+          <p>Spring Boot JAR deployed on EC2. Port 8081 behind a Security Group. Systemd service for auto-restart on reboot.</p>
+        </div>
+        <div class="card">
+          <h3>Database — RDS MySQL</h3>
+          <p>Managed MySQL 8 in a private subnet. Hibernate auto-runs DDL on startup. Connection string via SSM Parameter Store.</p>
+        </div>
+        <div class="card">
+          <h3>Frontend — S3 + CloudFront</h3>
+          <p><code>vite build</code> produces a static bundle. S3 bucket + CloudFront distribution serves it globally with HTTPS.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Secrets — SSM Parameter Store</h3>
+          <p>Three parameters: <code>DB_URL</code>, <code>DB_PASSWORD</code>, <code>JWT_SECRET</code>. Spring reads via <code>${ENV_VAR:local-default}</code> — same JAR, any environment.</p>
+        </div>
+        <div class="card">
+          <h3>CORS</h3>
+          <p>Allowed origins come from <code>CORS_ORIGINS</code> env var — CloudFront URL in prod, localhost in dev. No code change needed between environments.</p>
+        </div>
+        <div class="card">
+          <h3>Swagger UI</h3>
+          <p>API docs at <code>/swagger-ui.html</code> — auto-generated from controller annotations. Useful for peer review and integration testing.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 11 — TESTING ═══════════════════════════ -->
+  <div class="slide theme-stone">
+    <div class="section-label" style="color:#333;">Testing</div>
+    <p class="eyebrow">Quality Assurance</p>
+    <h2>Tested at every <span class="gold-word">layer</span></h2>
+    <div class="divider"></div>
+    <div class="cols" style="max-width:920px;">
+      <div class="col">
+        <div class="card">
+          <h3>Unit Tests — JUnit 5 + Mockito</h3>
+          <ul>
+            <li><strong>UserServiceTest</strong> — register, email duplicate, find user</li>
+            <li><strong>PostServiceTest</strong> — CRUD + not-found exception</li>
+            <li><strong>OrderServiceTest</strong> — guest &amp; authenticated checkout</li>
+            <li><strong>JwtUtilTest</strong> — generate, validate, tampered token</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Integration Tests — Postman</h3>
+          <ul>
+            <li>6 folders: Auth · Posts · Admin · Orders · Contact · Users</li>
+            <li>25+ requests covering success + failure paths</li>
+            <li>Auto-saves JWT to collection variable on login</li>
+            <li>Tests verify: status codes, response shape, 401/403 guards</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Accessibility Testing</h3>
+          <ul>
+            <li>Skip-to-main link on every page</li>
+            <li><code>aria-invalid</code>, <code>aria-describedby</code> on all inputs</li>
+            <li><code>aria-pressed</code> on filter buttons</li>
+            <li><code>role="alert"</code> on error notices</li>
+            <li><code>aria-live</code> on product count</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 12 — LESSONS LEARNED ═══════════════════ -->
+  <div class="slide theme-dark">
+    <div class="section-label">Lessons Learned</div>
+    <p class="eyebrow">Reflection</p>
+    <h2>What I would do <span class="gold-word">differently</span></h2>
+    <div class="divider"></div>
+    <div class="cols" style="max-width:960px;">
+      <div class="col">
+        <p class="eyebrow" style="text-align:left; margin-bottom:.8rem;">Challenges Overcome</p>
+        <div class="card">
+          <h3>CORS — three different configs</h3>
+          <p>Three controllers had <code>@CrossOrigin("*")</code> while WebConfig did nothing. Consolidated into one <code>WebMvcConfigurer</code> — single source of truth.</p>
+        </div>
+        <div class="card">
+          <h3>React hook ordering bug</h3>
+          <p>Found by tracing a runtime crash. The fix was strict: all hooks are declared before any conditional returns, no exceptions.</p>
+        </div>
+        <div class="card">
+          <h3>JWT secret in source control</h3>
+          <p>Caught during security review. Moved to <code>@Value</code> injection so the secret lives in env vars, not the repo.</p>
+        </div>
+      </div>
+      <div class="col">
+        <p class="eyebrow" style="text-align:left; margin-bottom:.8rem;">If Starting Over</p>
+        <div class="card">
+          <h3>Refresh Tokens from day one</h3>
+          <p>Short-lived access tokens with a separate refresh token flow would eliminate the need for users to log in again when the JWT expires.</p>
+        </div>
+        <div class="card">
+          <h3>Test-first on the backend</h3>
+          <p>Writing unit tests after the services were done caught bugs, but TDD would have caught the privilege escalation vulnerability before it was ever committed.</p>
+        </div>
+        <div class="card">
+          <h3>Pagination on product lists</h3>
+          <p>The shop currently loads all products. Pageable + Page&lt;T&gt; from Spring Data JPA would be a one-line change — and essential at scale.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 13 — SUMMARY ═══════════════════════════ -->
+  <div class="slide theme-gold">
+    <p class="eyebrow">Summary</p>
+    <h1>What was <span class="gold-word">built</span></h1>
+    <div class="divider"></div>
+    <div class="cols" style="max-width:900px; margin-top:.5rem;">
+      <div class="card col" style="text-align:center;">
+        <div class="number-big">2</div>
+        <h3>Full Codebases</h3>
+        <p>React SPA + Spring Boot REST API — independently deployable</p>
+      </div>
+      <div class="card col" style="text-align:center;">
+        <div class="number-big">6</div>
+        <h3>REST Endpoint Groups</h3>
+        <p>Auth · Posts · Orders · Contact · Users · Admin</p>
+      </div>
+      <div class="card col" style="text-align:center;">
+        <div class="number-big">4</div>
+        <h3>Security Fixes</h3>
+        <p>Privilege escalation · silent token · hardcoded secret · rate limiting</p>
+      </div>
+    </div>
+    <div style="margin-top:1.5rem;">
+      <span class="badge badge-green"><span>✓</span> Unit Tests</span>
+      <span class="badge badge-green"><span>✓</span> Integration Tests (Postman)</span>
+      <span class="badge badge-green"><span>✓</span> JWT Auth</span>
+      <span class="badge badge-green"><span>✓</span> RBAC</span>
+      <span class="badge badge-green"><span>✓</span> CORS</span>
+      <span class="badge badge-green"><span>✓</span> Rate Limiting</span>
+      <span class="badge badge-green"><span>✓</span> AWS-Ready</span>
+      <span class="badge badge-green"><span>✓</span> Accessibility</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 14 — QUESTIONS ═════════════════════════ -->
+  <div class="slide theme-dark">
+    <p class="eyebrow">Studio SA &nbsp;·&nbsp; SBA-307 Capstone</p>
+    <h1 style="font-size:clamp(3rem,7vw,5.5rem);"><span class="gold-word">Thank you</span></h1>
+    <div class="divider"></div>
+    <br/>
+    <div style="margin-top:1.5rem; font-family:monospace; font-size:.8rem; opacity:.5; line-height:2;">
+      <div>Frontend &nbsp;&nbsp; → &nbsp; React 18 + Vite 5</div>
+      <div>Backend &nbsp;&nbsp;&nbsp; → &nbsp; Spring Boot 3.2 + Spring Security 6</div>
+      <div>Database &nbsp;&nbsp; → &nbsp; MySQL 8 / AWS RDS</div>
+      <div>Auth &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; → &nbsp; JWT + BCrypt + Rate Limiting</div>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- Progress & controls -->
+<div id="progress"></div>
+<div id="controls">
+  <span id="slide-count"></span>
+  <button class="ctrl-btn" id="prev">← Prev</button>
+  <button class="ctrl-btn" id="next">Next →</button>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total  = slides.length;
+  let   cur    = 0;
+
+  function go(n) {
+    slides[cur].classList.remove('active');
+    cur = (n + total) % total;
+    slides[cur].classList.add('active');
+    document.getElementById('slide-count').textContent = `${cur + 1} / ${total}`;
+    document.getElementById('progress').style.width = `${((cur + 1) / total) * 100}%`;
+  }
+
+  document.getElementById('next').addEventListener('click', () => go(cur + 1));
+  document.getElementById('prev').addEventListener('click', () => go(cur - 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); go(cur + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                    { e.preventDefault(); go(cur - 1); }
+    if (e.key === 'Home') go(0);
+    if (e.key === 'End')  go(total - 1);
+  });
+
+  // Touch / swipe
+  let tx = 0;
+  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+  document.addEventListener('touchend',   e => {
+    const dx = tx - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > 50) dx > 0 ? go(cur + 1) : go(cur - 1);
+  });
+
+  go(0); // init
+</script>
+</body>
+</html>

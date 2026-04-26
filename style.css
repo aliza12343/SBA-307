@@ -1,0 +1,88 @@
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #0b0b0b;
+    color: white;
+}
+
+/* Logo & Nav */
+.logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+}
+
+.navbar {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+    padding: 2rem 0;
+}
+
+.nav-link {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Full Screen Image Setup */
+.carousel-item img {
+    object-fit: cover;
+    filter: brightness(60%) contrast(110%);
+}
+
+.vh-100 {
+    height: 100vh;
+}
+
+/* Typography */
+.carousel-caption {
+    bottom: 15%;
+    text-align: left;
+}
+
+.carousel-caption h2 {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+.tracking-widest {
+    letter-spacing: 5px;
+}
+
+/* Customizing Slideshow Arrows */
+.carousel-control-prev-icon, .carousel-control-next-icon {
+    width: 3rem;
+    height: 3rem;
+}
+/* Custom Selector 1: The Hindi-style font */
+.hindi-style-text {
+    font-family: 'Kalam', cursive; /* Handwritten South Asian style */
+    font-size: 4.5rem;
+    color: #D4AF37; /* Gold color */
+    position: relative;
+    display: inline-block;
+    padding-top: 10px;
+    letter-spacing: -1px;
+    text-transform: capitalize;
+}
+
+/* Custom Selector 2: Adding the "Shirorekha" (The top bar) */
+.hindi-style-text::before {
+    content: "";
+    position: absolute;
+    top: 25px; /* Adjust based on font size to sit on top of letters */
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #red;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Extra decoration */
+.gold-line {
+    width: 150px;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #D4AF37, transparent);
+    margin: 10px auto;
+}
